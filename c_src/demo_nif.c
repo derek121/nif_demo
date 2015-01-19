@@ -9,14 +9,8 @@ typedef struct {
 static void resource_dtor(ErlNifEnv* env, void* obj)
 {
   printf("In resource_dtor\r\n");
-
-  /*
-  Vals* vals = (Vals *)obj;
-  if (vals != NULL) {
-    enif_release_resource(vals->entries);
-  }
-  */
 }
+
 static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info)
 {
   printf("In load\r\n");
@@ -196,43 +190,6 @@ static ERL_NIF_TERM receive_resource_nif(ErlNifEnv* env, int argc, const ERL_NIF
 }
 
 
-
-/* */
-static ERL_NIF_TERM test_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-  ErlNifSysInfo info;
-  enif_system_info(&info, sizeof(info));
-  printf("TEST: "
-  "driver_major_version: %d. "
-  "driver_minor_version: %d. "
-  "erts_version: %s. "
-  "otp_release: %s. "
-  "thread_support: %d. "
-  "smp_support: %d. "
-  "async_threads: %d. "
-  "scheduler_threads: %d. "
-  "nif_major_version: %d. "
-  "nif_minor_version: %d. "
-  "dirty_scheduler_support: %d. "
-  "\r\n",
-      info.driver_major_version,
-      info.driver_minor_version,
-      info.erts_version,
-      info.otp_release,
-      info.thread_support,
-      info.smp_support,
-      info.async_threads,
-      info.scheduler_threads,
-      info.nif_major_version,
-      info.nif_minor_version,
-      info.dirty_scheduler_support);
-
-  return enif_make_atom(env, "ok");
-}
-
-
-
-
 static ErlNifFunc nif_funcs[] = {
   {"return_int", 0, return_int_nif},
   {"return_atom", 0, return_atom_nif},
@@ -247,9 +204,7 @@ static ErlNifFunc nif_funcs[] = {
   {"receive_list", 1, receive_list_nif},
 
   {"return_resource", 0, return_resource_nif},
-  {"receive_resource", 1, receive_resource_nif},
-
-  {"test", 0, test_nif},
+  {"receive_resource", 1, receive_resource_nif}
 };
 
 ERL_NIF_INIT(demo, nif_funcs, load, NULL, upgrade, unload)
