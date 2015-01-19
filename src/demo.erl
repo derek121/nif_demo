@@ -15,8 +15,6 @@
 -export([return_resource/0]).
 -export([receive_resource/1]).
 
--export([test/0]).
-
 -on_load(init/0).
 
 init() ->
@@ -59,10 +57,4 @@ return_resource() ->
 
 receive_resource(_Val) ->
   erlang:nif_error(nif_not_loaded).
-
-%%%
-test() ->
-  erlang:nif_error(nif_not_loaded).
-
-
 
