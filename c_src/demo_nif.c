@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include "erl_nif.h"
 
 typedef struct {
@@ -190,6 +191,35 @@ static ERL_NIF_TERM receive_resource_nif(ErlNifEnv* env, int argc, const ERL_NIF
 }
 
 
+/*
+ * For demonstration of the use of calling
+ * erlang:system_monitor(self(), [{long_schedule, 10}]).
+ * If this function sleeps longer than the argument to the system_monitor call,
+ * a message will be sent.
+ * For example,
+ *
+ * 1> erlang:system_monitor(self(), [{long_schedule, 10}]).
+ * {<0.38.0>,[{long_schedule,10}]}
+ * 2> spawn(fun() -> demo:delay(1) end).
+ * <0.66.0>
+ * 3> flush().
+ * Shell got {monitor,<0.66.0>,long_schedule,
+                    * [{timeout,1001},{in,undefined},{out,undefined}]}
+ * ok
+ */
+static ERL_NIF_TERM delay_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+  int secs;
+  if (!enif_get_int(env, argv[0], &secs)) {
+    return 0;
+  }
+
+  sleep(secs);
+
+  return enif_make_atom(env, "ok");
+}
+
+
 static ErlNifFunc nif_funcs[] = {
   {"return_int", 0, return_int_nif},
   {"return_atom", 0, return_atom_nif},
@@ -204,7 +234,9 @@ static ErlNifFunc nif_funcs[] = {
   {"receive_list", 1, receive_list_nif},
 
   {"return_resource", 0, return_resource_nif},
-  {"receive_resource", 1, receive_resource_nif}
+  {"receive_resource", 1, receive_resource_nif},
+
+  {"delay", 1, delay_nif}
 };
 
 ERL_NIF_INIT(demo, nif_funcs, load, NULL, upgrade, unload)

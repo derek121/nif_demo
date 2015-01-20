@@ -15,6 +15,8 @@
 -export([return_resource/0]).
 -export([receive_resource/1]).
 
+-export([delay/1]).
+
 -on_load(init/0).
 
 init() ->
@@ -58,3 +60,6 @@ return_resource() ->
 receive_resource(_Val) ->
   erlang:nif_error(nif_not_loaded).
 
+%%%
+delay(_Seconds) ->
+  erlang:nif_error(nif_not_loaded).
